@@ -1,0 +1,679 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WORLD WAR - The History Game</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #111;
+  color: white;
+  font-family: Georgia, serif;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 25px 15px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #777;
+  padding-bottom: 15px;
+  font-family: Arial;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.hero {
+  text-align: center;
+  padding: 55px 10px 35px;
+}
+
+.hero h1 {
+  font-size: clamp(38px, 8vw, 75px);
+  margin: 15px 0;
+  text-shadow: 3px 3px #555;
+}
+
+.hero h1 span {
+  display: block;
+  font-size: 20px;
+  letter-spacing: 7px;
+  color: #aaa;
+}
+
+.hero p {
+  color: #aaa;
+  line-height: 1.7;
+  font-family: Arial;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+.menu {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.menu button {
+  background: #222;
+  border: 1px solid #666;
+  color: white;
+  padding: 22px;
+  text-align: left;
+  min-height: 100px;
+}
+
+.menu button:hover {
+  background: #444;
+}
+
+.menu b {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.menu small {
+  color: #aaa;
+  font-family: Arial;
+  line-height: 1.5;
+}
+
+.panel {
+  background: #202020;
+  border: 1px solid #555;
+  padding: 25px;
+}
+
+h2 {
+  text-align: center;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  color: #aaa;
+  font-family: Arial;
+  font-size: 12px;
+}
+
+.progress {
+  height: 5px;
+  background: #444;
+  margin: 20px 0;
+}
+
+.progress div {
+  height: 100%;
+  background: white;
+  width: 0%;
+}
+
+.question {
+  text-align: center;
+  font-size: 25px;
+  margin: 30px 0;
+}
+
+.answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.answer {
+  padding: 16px;
+  background: #292929;
+  border: 1px solid #666;
+  color: white;
+  text-align: left;
+  font-family: Arial;
+}
+
+.answer:hover:not(:disabled) {
+  background: #444;
+}
+
+.answer.correct {
+  background: #555;
+  border-color: white;
+}
+
+.answer.wrong {
+  background: #292929;
+  border-color: #999;
+}
+
+.feedback {
+  text-align: center;
+  color: #ccc;
+  margin: 20px 0;
+  line-height: 1.5;
+  font-family: Arial;
+}
+
+.main-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 13px 25px;
+  background: white;
+  color: black;
+  border: none;
+  font-weight: bold;
+}
+
+.back-btn {
+  background: transparent;
+  color: white;
+  border: 1px solid #777;
+  padding: 12px 20px;
+}
+
+.event {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  background: #292929;
+  border: 1px solid #666;
+  color: white;
+  text-align: left;
+}
+
+.event:hover {
+  background: #444;
+}
+
+.card {
+  background: #292929;
+  border-left: 3px solid white;
+  padding: 16px;
+  margin: 15px 0;
+  font-family: Arial;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #ccc;
+}
+
+.card b {
+  color: white;
+}
+
+.result {
+  text-align: center;
+}
+
+.score {
+  font-size: 60px;
+}
+
+.footer {
+  text-align: center;
+  color: #777;
+  font: 10px Arial;
+  letter-spacing: 3px;
+  margin-top: 40px;
+}
+
+@media(max-width:550px) {
+  .menu,
+  .answers {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: 17px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <b>ARCHIVE • HISTORY PROJECT</b>
+  <span>1939–1945</span>
+</header>
+
+<div class="hero">
+  <p>SEBUAH PERJALANAN MENELUSURI MASA LALU</p>
+  <h1>
+    WORLD WAR
+    <span>THE HISTORY GAME</span>
+  </h1>
+  <p>
+    Pelajari sejarah Perang Dunia I dan II
+    melalui kuis dan fakta sejarah.
+  </p>
+</div>
+
+<section id="home" class="screen active">
+  <div class="menu">
+
+    <button onclick="startQuiz('ww1')">
+      <b>01 / Perang Dunia I</b>
+      <small>Pelajari sejarah tahun 1914–1918.</small>
+    </button>
+
+    <button onclick="startQuiz('ww2')">
+      <b>02 / Perang Dunia II</b>
+      <small>Pelajari sejarah tahun 1939–1945.</small>
+    </button>
+
+    <button onclick="startTimeline()">
+      <b>03 / Susun Kronologi</b>
+      <small>Urutkan peristiwa sejarah.</small>
+    </button>
+
+    <button onclick="showScreen('facts')">
+      <b>04 / Arsip Sejarah</b>
+      <small>Baca fakta sejarah Perang Dunia.</small>
+    </button>
+
+  </div>
+</section>
+
+<section id="quiz" class="screen">
+  <div class="panel">
+
+    <div class="stats">
+      <span id="mode">MODE KUIS</span>
+      <span id="progressText">1 / 5</span>
+      <span id="score">SKOR: 0</span>
+    </div>
+
+    <div class="progress">
+      <div id="bar"></div>
+    </div>
+
+    <h2 id="question" class="question"></h2>
+
+    <div id="answers" class="answers"></div>
+
+    <div id="feedback" class="feedback">
+      Pilih jawaban yang benar.
+    </div>
+
+    <button id="next" class="main-btn"
+      onclick="nextQuestion()" style="display:none">
+      LANJUT
+    </button>
+
+    <button class="back-btn"
+      onclick="showScreen('home')">
+      KELUAR
+    </button>
+
+  </div>
+</section>
+
+<section id="timeline" class="screen">
+  <div class="panel">
+    <h2>SUSUN KRONOLOGI</h2>
+    <p class="feedback">
+      Pilih peristiwa berdasarkan tahun paling awal.
+    </p>
+
+    <div id="events"></div>
+    <div id="timelineFeedback" class="feedback"></div>
+
+    <button class="back-btn"
+      onclick="showScreen('home')">
+      KEMBALI
+    </button>
+  </div>
+</section>
+
+<section id="facts" class="screen">
+  <div class="panel">
+    <h2>ARSIP SEJARAH</h2>
+
+    <div class="card">
+      <b>1914 — Awal Perang Dunia I</b>
+      <br>
+      Perang Dunia I bermula setelah terbunuhnya
+      Archduke Franz Ferdinand di Sarajevo.
+    </div>
+
+    <div class="card">
+      <b>1918 — Akhir Perang Dunia I</b>
+      <br>
+      Gencatan senjata berlaku pada 11 November 1918.
+    </div>
+
+    <div class="card">
+      <b>1939 — Awal Perang Dunia II</b>
+      <br>
+      Jerman menginvasi Polandia pada
+      1 September 1939.
+    </div>
+
+    <div class="card">
+      <b>1945 — Akhir Perang Dunia II</b>
+      <br>
+      Perang Dunia II berakhir pada tahun 1945.
+    </div>
+
+    <div class="card">
+      <b>Dampak Perang Dunia</b>
+      <br>
+      Perang menyebabkan banyak korban jiwa,
+      kerusakan, dan perubahan politik dunia.
+    </div>
+
+    <button class="main-btn"
+      onclick="showScreen('home')">
+      KEMBALI
+    </button>
+  </div>
+</section>
+
+<section id="result" class="screen">
+  <div class="panel result">
+    <h2>PERMAINAN SELESAI</h2>
+    <div id="finalScore" class="score">0</div>
+    <p id="resultText"></p>
+
+    <button class="main-btn"
+      onclick="showScreen('home')">
+      MENU UTAMA
+    </button>
+
+    <button class="back-btn" onclick="replay()">
+      ULANGI
+    </button>
+  </div>
+</section>
+
+<div class="footer">
+  REMEMBER THE PAST • LEARN FOR PEACE
+</div>
+
+</div>
+
+<script>
+const data = {
+  ww1: [
+    {
+      q: "Kapan Perang Dunia I dimulai?",
+      a: ["1914", "1918", "1939", "1945"],
+      c: 0,
+      e: "Perang Dunia I dimulai pada tahun 1914."
+    },
+    {
+      q: "Siapa tokoh yang pembunuhannya menjadi pemicu langsung perang?",
+      a: [
+        "Adolf Hitler",
+        "Franz Ferdinand",
+        "Winston Churchill",
+        "Napoleon"
+      ],
+      c: 1,
+      e: "Franz Ferdinand dibunuh di Sarajevo pada 1914."
+    },
+    {
+      q: "Kapan Perang Dunia I berakhir?",
+      a: ["1916", "1917", "1918", "1920"],
+      c: 2,
+      e: "Gencatan senjata berlaku pada 11 November 1918."
+    },
+    {
+      q: "Perjanjian Versailles ditandatangani pada tahun?",
+      a: ["1918", "1919", "1920", "1921"],
+      c: 1,
+      e: "Perjanjian Versailles ditandatangani pada 1919."
+    },
+    {
+      q: "Jerman termasuk kelompok aliansi apa?",
+      a: ["Blok Sekutu", "Blok Sentral", "NATO", "Pakta Warsawa"],
+      c: 1,
+      e: "Jerman merupakan bagian dari Blok Sentral."
+    }
+  ],
+
+  ww2: [
+    {
+      q: "Kapan Perang Dunia II dimulai?",
+      a: ["1914", "1918", "1939", "1945"],
+      c: 2,
+      e: "Perang Dunia II dimulai pada 1939."
+    },
+    {
+      q: "Negara yang diinvasi Jerman pada 1939 adalah?",
+      a: ["Polandia", "Belgia", "Italia", "Jepang"],
+      c: 0,
+      e: "Jerman menginvasi Polandia pada 1 September 1939."
+    },
+    {
+      q: "Serangan Pearl Harbor terjadi pada tahun?",
+      a: ["1939", "1940", "1941", "1945"],
+      c: 2,
+      e: "Serangan Pearl Harbor terjadi pada 7 Desember 1941."
+    },
+    {
+      q: "Organisasi PBB berdiri pada tahun?",
+      a: ["1939", "1941", "1945", "1950"],
+      c: 2,
+      e: "PBB resmi berdiri pada 24 Oktober 1945."
+    },
+    {
+      q: "Kapan Perang Dunia II berakhir?",
+      a: ["1941", "1943", "1945", "1950"],
+      c: 2,
+      e: "Perang Dunia II berakhir pada tahun 1945."
+    }
+  ]
+};
+
+let current = [];
+let index = 0;
+let points = 0;
+let lastMode = "ww1";
+let timelineIndex = 0;
+let timelineDone = [];
+
+const $ = id => document.getElementById(id);
+
+function showScreen(id) {
+  document.querySelectorAll(".screen")
+    .forEach(s => s.classList.remove("active"));
+
+  $(id).classList.add("active");
+}
+
+function startQuiz(mode) {
+  lastMode = mode;
+  current = [...data[mode]];
+  index = 0;
+  points = 0;
+
+  renderQuestion();
+  showScreen("quiz");
+}
+
+function renderQuestion() {
+  const q = current[index];
+
+  $("mode").textContent =
+    lastMode === "ww1" ? "PERANG DUNIA I" : "PERANG DUNIA II";
+
+  $("progressText").textContent =
+    (index + 1) + " / " + current.length;
+
+  $("score").textContent = "SKOR: " + points;
+
+  $("bar").style.width =
+    (index / current.length * 100) + "%";
+
+  $("question").textContent = q.q;
+  $("feedback").textContent = "Pilih jawaban yang benar.";
+  $("next").style.display = "none";
+  $("answers").innerHTML = "";
+
+  q.a.forEach((answer, i) => {
+    const button = document.createElement("button");
+
+    button.className = "answer";
+    button.textContent =
+      String.fromCharCode(65 + i) + ". " + answer;
+
+    button.onclick = () => checkAnswer(i);
+
+    $("answers").appendChild(button);
+  });
+}
+
+function checkAnswer(choice) {
+  const q = current[index];
+  const buttons = [...$("answers").children];
+
+  buttons.forEach((button, i) => {
+    button.disabled = true;
+
+    if (i === q.c) {
+      button.classList.add("correct");
+    }
+
+    if (i === choice && i !== q.c) {
+      button.classList.add("wrong");
+    }
+  });
+
+  if (choice === q.c) {
+    points += 10;
+    $("feedback").textContent = "BENAR! " + q.e;
+  } else {
+    $("feedback").textContent = "Belum tepat. " + q.e;
+  }
+
+  $("score").textContent = "SKOR: " + points;
+
+  $("bar").style.width =
+    ((index + 1) / current.length * 100) + "%";
+
+  $("next").style.display = "block";
+
+  $("next").textContent =
+    index === current.length - 1
+      ? "LIHAT HASIL"
+      : "LANJUT";
+}
+
+function nextQuestion() {
+  index++;
+
+  if (index >= current.length) {
+    $("finalScore").textContent = points + " / 50";
+
+    $("resultText").textContent =
+      points >= 40
+        ? "Hebat! Pengetahuan sejarahmu sangat baik."
+        : points >= 20
+        ? "Bagus! Terus belajar sejarah."
+        : "Tetap semangat dan coba lagi.";
+
+    showScreen("result");
+  } else {
+    renderQuestion();
+  }
+}
+
+const events = [
+  { year: 1914, label: "Perang Dunia I dimulai" },
+  { year: 1918, label: "Gencatan senjata Perang Dunia I" },
+  { year: 1939, label: "Perang Dunia II dimulai" },
+  { year: 1945, label: "Perang Dunia II berakhir" }
+];
+
+function startTimeline() {
+  lastMode = "timeline";
+  timelineIndex = 0;
+  timelineDone = [];
+
+  renderTimeline();
+  showScreen("timeline");
+}
+
+function renderTimeline() {
+  $("events").innerHTML = "";
+
+  $("timelineFeedback").textContent =
+    "Pilih peristiwa yang paling awal.";
+
+  const shuffled = [...events]
+    .sort(() => Math.random() - 0.5);
+
+  shuffled.forEach(event => {
+    if (timelineDone.includes(event.year)) return;
+
+    const button = document.createElement("button");
+
+    button.className = "event";
+    button.textContent = event.label;
+    button.onclick = () => chooseEvent(event);
+
+    $("events").appendChild(button);
+  });
+}
+
+function chooseEvent(event) {
+  const expected = events[timelineIndex];
+
+  if (event.year === expected.year) {
+    timelineDone.push(event.year);
+    timelineIndex++;
+
+    if (timelineIndex === events.length) {
+      $("finalScore").textContent = "4 / 4";
+      $("resultText").textContent =
+        "Kamu berhasil menyusun seluruh kronologi sejarah.";
+
+      showScreen("result");
+    } else {
+      renderTimeline();
+
+      $("timelineFeedback").textContent =
+        "Benar! " + event.year + " — " + event.label;
+    }
+  } else {
+    $("timelineFeedback").textContent =
+      "Belum tepat. Coba perhatikan urutan tahunnya.";
+  }
+}
+
+function replay() {
+  if (lastMode === "timeline") {
+    startTimeline();
+  } else {
+    startQuiz(lastMode);
+  }
+}
+</script>
+
+</body>
+  </html>
+  
